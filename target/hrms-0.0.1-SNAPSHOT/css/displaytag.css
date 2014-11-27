@@ -1,0 +1,141 @@
+table {
+	margin: 0 0 0 0;
+	border: 1px solid #000000;
+	background-color:#ffffff;
+	width: 94%;
+	margin: 10px 0 10px 0 !important;
+	border-collapse: collapse;
+	font-family: "宋体", System;
+	font-size: 12px;
+	color: #000000;
+	text-decoration: none;	
+}
+
+th,td {
+	margin: 0 0 0 0;
+	padding: 1px 2px 1px 2px !important;
+	vertical-align: middle;
+	text-align: center;
+	height:26px;
+	border: 1px solid #ccc;	
+}
+
+thead tr {
+	background-color: #e0f1fb;
+	text-align: center;
+	vertical-align: middle;
+	height:27px;
+	line-height: 27px;
+}
+
+th.sorted {
+	background-color: #bbbbbb;
+}
+
+th a,th a:visited {
+	color: black;
+}
+
+th a:hover {
+	text-decoration: underline;
+	color: black;
+}
+
+th.sorted a,th.sortable a {
+	background-position: right;
+	display: block;
+	width: 94%;
+}
+
+th.sortable a {
+	background-image: url(../img/arrow_off.png);
+	background-repeat: no-repeat;	
+}
+
+th.order1 a {
+	background-image: url(../img/arrow_down.png);
+	background-repeat: no-repeat;	
+}
+
+th.order2 a {
+	background-image: url(../img/arrow_up.png);
+	background-repeat: no-repeat;	
+}
+
+tr.odd {
+	background-color: #fff
+}
+
+tr.tableRowEven,tr.even {
+	background-color: #eee
+}
+
+div.exportlinks {
+	background-color: #ffffff;
+	padding: 2px 4px 2px 4px;
+	margin: 2px 0 10px 0;
+	width: 94%;
+	font-family: "宋体", System;
+	font-size: 12px;
+	color: #000000;
+	text-decoration: none;	
+}
+
+span.export {
+	padding: 0 4px 1px 20px;
+	cursor: pointer;
+	font-family: "宋体", System;
+	font-size: 12px;
+	color: #000000;
+}
+
+span.excel {
+	background-image: url(../img/ico_file_excel.png);
+	background-repeat: no-repeat;
+}
+
+span.csv {
+	background-image: url(../img/ico_file_csv.png);
+	background-repeat: no-repeat;
+}
+
+span.xml {
+	background-image: url(../img/ico_file_xml.png);
+	background-repeat: no-repeat;	
+}
+
+span.pdf {
+	background-image: url(../img/ico_file_pdf.png);
+	background-repeat: no-repeat;
+}
+
+span.rtf {
+	background-image: url(../img/ico_file_rtf.png);
+	background-repeat: no-repeat;	
+}
+
+span.pagebanner {
+	background-color: #ffffff;
+	padding: 2px 4px 2px 4px;
+	width: 94%;
+	margin-top: 10px;
+	display: block;
+	border-bottom: none;
+	font-family: "宋体", System;
+	font-size: 12px;
+	color: #000000;
+	text-decoration: none;	
+}
+
+span.pagelinks {
+	background-color: #ffffff;
+	padding: 2px 4px 2px 4px;
+	width: 94%;
+	display: block;
+	border-top: none;
+	margin-bottom: -5px;
+	font-family: "宋体", System;
+	font-size: 12px;
+	color: #000000;
+	text-decoration: none;	
+}

@@ -1,0 +1,178 @@
+body {
+	margin-left: 0px;
+	margin-top: 0px;
+	margin-right: 0px;
+	margin-bottom: 0px;
+	font-size: 12px;
+}
+
+a:link {
+	color: #1b3459;
+	text-decoration: none
+}
+
+a:visited {
+	color: #1b3459;
+	text-decoration: none
+}
+
+a:hover {
+	color: #ff0000;
+	text-decoration: none;
+	position: relative;
+	right: 0px;
+	top: 1px
+}
+
+a:active {
+	color: #000000;
+	text-decoration: none
+}
+
+a {
+	cursor: hand
+}
+
+.STYLE1 {
+	font-size: 12px
+}
+
+.STYLE3 {
+	font-size: 12px;
+	font-weight: bold;
+}
+
+.STYLE4 {
+	color: #03515d;
+	font-size: 12px;
+}
+
+.mainIframeTableTh {
+	height: 23px;
+	background: url("images/bg.gif");
+	background-color: #eaf4fd;
+	text-align: center;
+	font-size: 12px;
+}
+
+.mainIframeTableTd {
+	height: 20px;
+	text-align: center;
+	font-size: 12px;
+	background-color: #FFFFFF;
+}
+
+.listTop {
+	height: 50px;
+	width: 100%;
+	background-image: url('contenttbback.jpg');
+	padding: 2px;
+	margin-top: 1px;
+	border: #6291b3 solid 1px;
+}
+
+.addTable {
+	font-size: 12px;
+	color: #03515d;
+}
+
+.addTd {
+	padding-right: 50px;
+	text-align: right;
+}
+
+.addTd2 {
+	padding-left: 185px;
+	padding-right: 50px;
+	text-align: right;
+}
+
+.addDiv {
+	height: 50px;
+	width: 100%;
+	background-image: url('contenttbback.jpg');
+	padding-top: 15px;
+	padding-bottom: 30px;
+	padding-left: 100px;
+	padding-right: 70px;
+	margin-top: 30px;
+	margin-bottom: 0px;
+	margin-right: 20px;
+	margin-left: 20px;
+	font-size: 12px;
+	border: #6291b3 solid 1px;
+}
+
+.detailTable {
+	font-size: 12px;
+	color: #004779;
+}
+
+.detailTdName1 {
+	font-size: 12px;
+	padding-left: 50px;
+	padding-bottom: 12px;
+}
+
+.detailTdName2 {
+	font-size: 12px;
+	padding-left: 200px;
+	padding-right: 50px;
+	padding-bottom: 12px;
+}
+
+.detailTdName3 {
+	font-size: 12px;
+	padding-left: 155px;
+	padding-bottom: 12px;
+}
+
+.detailTdValue {
+	font-size: 12px;
+	color: black;
+	padding-left: 100px;
+	padding-bottom: 12px;
+}
+
+.detailTdValue2 {
+	font-size: 12px;
+	color: black;
+	padding-left: 50px;
+	padding-bottom: 12px;
+}
+
+.errorMessage {
+	color: red;
+	font-size: 12px
+}
+
+.tablePanel {
+	height: 100%;
+	width: 100%;
+	border-collapse: collapse;
+	border-spacing: 0px;
+	border: 0px;
+}
+
+.btnClick {
+	width: 58px;
+	height: 25px;
+	line-height: 25px;
+	cursor: pointer;
+}
+
+.txtSearch {
+	width: 200px;
+	height: 25px;
+	line-height: 25px
+}
+
+.errorMessage {
+	color: red;
+	font-size: 12px
+}
+
+.actionMessage {
+	color: red;
+	font-size: 12px
+}

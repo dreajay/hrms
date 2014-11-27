@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE validators PUBLIC 
+  		"-//OpenSymphony Group//XWork Validator 1.0.2//EN" 
+  		"http://www.opensymphony.com/xwork/xwork-validator-1.0.2.dtd">
+
+<validators>
+	<field name="user.userName">
+		<field-validator type="requiredstring">
+			<message>登录的用户名不能为空</message>
+		</field-validator>
+		<field-validator type="regex">
+			<param name="expression">^[a-zA-Z][a-zA-Z0-9_]{1,15}$</param>
+			<message>登录的用户名必须以字母开始，后面跟字母、数字或_，长度为1-15位</message>
+		</field-validator>
+	</field>
+	
+	<field name="user.userPassword">
+		<field-validator type="requiredstring">
+			<message>登录的密码不能为空</message>
+		</field-validator>
+		<field-validator type="regex">
+			<param name="expression">^[a-zA-Z0-9!@#]{1,15}$</param>
+			<message>登录的密码可以由字母、数字和! @ # 组成，长度为1-15位</message>
+		</field-validator>
+	</field>
+	
+	
+</validators>

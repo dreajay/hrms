@@ -1,0 +1,33 @@
+	a {
+		cursor: pointer;
+	}
+	.mainIframeTableTh {
+		height: 22px;
+		background: url("images/bg.gif");
+		background-color: #FFFFFF;
+		text-align: center;
+		font-size: 12px;
+	}
+	.mainIframeTableTd {
+		height: 20px;
+		text-align: center;
+		font-size: 12px;
+		background-color: #FFFFFF;
+	}
+	
+	#win {
+   	background-color:#dfeef9;
+   	width:500px;
+    height:140px;
+    position:absolute;
+    top:150px;
+    left:300px;
+    display:none;
+	}
+
+	
+
+	#close {
+	font-size:12px;
+    margin-left:390px;
+	}

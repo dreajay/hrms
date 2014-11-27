@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context-2.5.xsd
+           http://www.springframework.org/schema/tx 
+           http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+           http://www.springframework.org/schema/aop 
+           http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
+           
+<!-- 开启注解处理器 -->  
+	<context:annotation-config />
+<!--检测com.hrms下的类并注册相应的bean-->  
+	<context:component-scan base-package="com.hrms" />
+	
+	<aop:aspectj-autoproxy />
+	
+ <!-- 配置Hibernate支持 -->
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close">
+		<!--results in a setDriverClassName(String) call -->
+		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+		<property name="url" value="jdbc:mysql://localhost:3306/hrms" />
+		<property name="username" value="root" />
+		<property name="password" value="root" />
+	</bean>
+	
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<!--
+		<property name="annotatedClasses">
+			<list>
+				<value>com.spring.model.User</value>
+				<value>com.spring.model.Log</value>
+			</list>
+		</property>
+		  -->
+		 <property name="packagesToScan">
+			<list>
+				<value>com.hrms.model</value>
+			</list>
+		</property>
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+				<prop key="show_sql">true</prop>
+			</props>
+			<!--
+				<value> hibernate.dialect=org.hibernate.dialect.MySQLDialect
+				</value>
+			-->
+		</property>
+	</bean>
+	
+	<bean id="hibernateTemplate" class="org.springframework.orm.hibernate3.HibernateTemplate">
+	 <property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+	
+<!-- 事务管理器 -->
+	<bean id="txManager"
+		class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+
+<!-- 配置事务特性，配置add，delete，update...开始的方法，事务传播特性为required -->
+	<tx:advice id="txAdvice" transaction-manager="txManager">
+		<!-- the transactional semantics... -->
+		<tx:attributes>
+			<!-- all methods starting with 'get' are read-only -->
+			<tx:method name="*" read-only="true" />
+			<!-- other methods use the default transaction settings (see below) -->
+			<tx:method name="save*" propagation="REQUIRED" />   
+	        <tx:method name="update*" propagation="REQUIRED" />   
+	        <tx:method name="delete*" propagation="REQUIRED" />
+	        <tx:method name="*update" propagation="REQUIRED" />
+	        <tx:method name="*" propagation="REQUIRED" />   
+		</tx:attributes>
+	</tx:advice>
+	
+<!-- 配置那些类的方法进行事务管理，当前com.hrms.service包中的子包,类中所有方法需要，还需要参考tx:advice的设置 -->	
+	<aop:config>
+		<aop:pointcut expression="execution(public * com.hrms.dao..*(..))"
+			id="trans" />
+		<aop:advisor advice-ref="txAdvice" pointcut-ref="trans" />
+	</aop:config>
+	<!--	
+	<bean id="baseHibernateDAOImpl" class="com.hrms.dao.impl.BaseHibernateDAOImpl">
+		<property name="sessionFactory" ref="sessionFactory" />	
+	</bean>	
+		
+	<bean id="managerDao" class="com.hrms.dao.impl.ManagerDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory" />	
+	</bean>
+	-->
+	<!-- 采用注解形式的声明式事务管理 -->
+<!-- <tx:annotation-driven transaction-manager="txManager" />-->
+
+	<!-- bean服务 -->
+	<bean id="trainService" class="com.hrms.service.impl.TrainServiceImpl">
+		<property name="genericDao" ref="trainDao"></property>
+	</bean>
+	<bean id="traintypeService" class="com.hrms.service.impl.TraintypeServiceImpl">
+		<property name="genericDao" ref="traintypeDao"></property>
+	</bean>
+	<bean id="roleService" class="com.hrms.service.impl.RoleServiceImpl">
+		<property name="genericDao" ref="roleDao"></property>
+	</bean>
+	<bean id="deptService" class="com.hrms.service.impl.DeptServiceImpl">
+		<property name="genericDao" ref="deptDao"></property>
+	</bean>
+	<bean id="postService" class="com.hrms.service.impl.PostServiceImpl">
+		<property name="genericDao" ref="postDao"></property>
+	</bean>
+	<bean id="employeeStateService" class="com.hrms.service.impl.EmployeeStateServiceImpl">
+		<property name="genericDao" ref="employeeStateDao"></property>
+	</bean>
+	<bean id="employeeService" class="com.hrms.service.impl.EmployeeServiceImpl">
+		<property name="genericDao" ref="employeeDao"></property>
+	</bean>
+	<bean id="moduleService" class="com.hrms.service.impl.ModuleServiceImpl">
+		<property name="genericDao" ref="moduleDao"></property>
+	</bean>
+	<bean id="roleModuleService" class="com.hrms.service.impl.RoleModuleServiceImpl">
+		<property name="genericDao" ref="roleModuleDao"></property>
+	</bean>
+	<bean id="userModuleService" class="com.hrms.service.impl.UserModuleServiceImpl">
+		<property name="genericDao" ref="userModuleDao"></property>
+	</bean>
+	<bean id="userService" class="com.hrms.service.impl.UserServiceImpl">
+		<property name="genericDao" ref="userDao"></property>
+	</bean>
+	<bean id="actionService" class="com.hrms.service.impl.ActionServiceImpl">
+		<property name="genericDao" ref="actionDao"></property>
+	</bean>
+	<bean id="rolePermissionService" class="com.hrms.service.impl.RolePermissionServiceImpl">
+		<property name="genericDao" ref="rolePermissionDao"></property>
+	</bean>
+	<bean id="userPermissionService" class="com.hrms.service.impl.UserPermissionServiceImpl">
+		<property name="genericDao" ref="userPermissionDao"></property>
+	</bean>
+	<bean id="syslogService" class="com.hrms.service.impl.SyslogServiceImpl">
+		<property name="genericDao" ref="syslogDao"></property>
+	</bean>
+	<bean id="employeeRedeployService" class="com.hrms.service.impl.EmployeeRedeployServiceImpl">
+		<property name="genericDao" ref="employeeRedeployDao"></property>
+	</bean>
+	<bean id="redeployTypeService" class="com.hrms.service.impl.RedeployTypeServiceImpl">
+		<property name="genericDao" ref="redeployTypeDao"></property>
+	</bean>
+	<bean id="recruitService" class="com.hrms.service.impl.RecruitServiceImpl">
+		<property name="genericDao" ref="recruitDao"></property>
+	</bean>
+	<bean id="jobSeekerService" class="com.hrms.service.impl.JobSeekerServiceImpl">
+		<property name="genericDao" ref="jobSeekerDao"></property>
+	</bean>
+	<bean id="leaveService" class="com.hrms.service.impl.LeaveServiceImpl">
+		<property name="genericDao" ref="leaveDao"></property>
+	</bean>
+	<bean id="leaveTypeService" class="com.hrms.service.impl.LeaveTypeServiceImpl">
+		<property name="genericDao" ref="leaveTypeDao"></property>
+	</bean>
+</beans>

@@ -1,0 +1,48 @@
+	a {
+		cursor: pointer;
+	}
+	.mainIframeTableTh {
+		height: 22px;
+		background: url("images/bg.gif");
+		background-color: #FFFFFF;
+		text-align: center;
+		font-size: 12px;
+	}
+	.mainIframeTableTd {
+		height: 20px;
+		text-align: center;
+		font-size: 12px;
+		background-color: #FFFFFF;
+	}
+	
+	#win {
+	
+   	background-color:#dfeef9;
+   	width:500px;
+    height:200px;
+    position:absolute;
+    top:100px;
+    left:300px;
+    display:none;
+	}
+
+	#title {
+    background-image:url(images/queryTitleBg.gif);
+    color:white;
+    padding-left:5px;
+    padding-top:5px;
+    padding-bottom:5px;
+    border-bottom: #green solid 5px;
+    
+	}
+
+	#content {
+	font-size:12px;
+    padding-left:3px;
+    padding-top:10px;
+	}
+
+	#close {
+	font-size:12px;
+    margin-left:310px;
+	}

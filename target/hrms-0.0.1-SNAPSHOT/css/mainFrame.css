@@ -1,0 +1,96 @@
+a {
+	cursor: hand
+}
+.center {
+	font-size: 13px;
+}
+
+.spwidth1 {
+	width: 90px;
+}
+
+.spwidth2 {
+	width: 38px;
+}
+
+.spwidth3 {
+	width: 30px;
+}
+
+.amd {
+	width: 970;
+	border: #cccccc solid 1px;
+}
+
+.mainCenterTop {
+	height: 40px;
+}
+
+.cmdField {
+	BORDER-RIGHT: 0px;
+	BORDER-TOP: 0px;
+	BACKGROUND-IMAGE: url(../images/click.gif);
+	OVERFLOW: hidden;
+	BORDER-LEFT: 0px;
+	WIDTH: 67px;
+	COLOR: #364c6d;
+	LINE-HEIGHT: 27px;
+	BORDER-BOTTOM: 0px;
+	BACKGROUND-REPEAT: repeat-x;
+	HEIGHT: 27px;
+	BACKGROUND-COLOR: transparent;
+	TEXT-DECORATION: none
+}
+
+.pagediv {
+	font-size: 13px;
+	text-align: center;
+}
+
+.go {
+	width: 20px;
+	background-color: #ebf4fb;
+	border: #000000 solid 1px;
+	text-align: center;
+	cursor: pointer;
+}
+
+.txtCurrentPage {
+	width: 20px;
+	text-align: center;
+}
+
+.listTop {
+	height: 50px;
+	width: 100%;
+	background-image: url('contenttbback.jpg');
+	padding: 3px;
+	margin-bottom:0px;
+	border: #6291b3 solid 1px;
+}
+.listNavigate {
+	padding: 3px;
+	border-bottom: #6291b3 solid 1px;
+}
+
+.sp500 {
+	width: 500px;
+}
+
+.sp850 {
+	width: 850px;
+}
+
+.label {
+	font-style: italic;
+}
+
+.errorLabel {
+	font-weight: bold;
+	font-style: italic;
+	color: red;
+}
+
+.errorMessage {
+	color: red;
+}

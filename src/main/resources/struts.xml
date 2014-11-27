@@ -1,0 +1,715 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.1//EN"
+    "http://struts.apache.org/dtds/struts-2.1.dtd">
+
+<struts>
+	<constant name="strust.devMode" value="true" />
+	<constant name="struts.i18n.encoding" value="UTF-8" />
+	<constant name="struts.objectFactory" 
+	value="org.apache.struts2.spring.StrutsSpringObjectFactory" />
+	<constant name="struts.configuration.xml.reload" value="true" /> 
+
+	<package name="my-default" extends="struts-default">
+    	<!-- 定义拦截器  -->
+    	<interceptors>
+            <interceptor-stack name="default-with-my-inteceptor">
+                <interceptor-ref name="defaultStack"/>
+                <interceptor-ref name="userLoginInterceptor"/>
+                <interceptor-ref name="syslogInterceptor"/>
+                <interceptor-ref name="permissionInterceptor"/>
+            </interceptor-stack>
+            
+            <interceptor name="userLoginInterceptor" class="com.hrms.interceptor.UserLoginInterceptor"/>
+            <interceptor name="syslogInterceptor" class="com.hrms.interceptor.SyslogInterceptor"/>
+            <interceptor name="permissionInterceptor" class="com.hrms.interceptor.PermissionInterceptor">
+            	<param name="actionId">${actionId}</param>
+            </interceptor>
+		</interceptors>
+		
+		<!--这句是设置所有Action自动调用的拦截器堆栈  -->
+		<default-interceptor-ref name="default-with-my-inteceptor"/>
+		
+		 <!--全局result -->
+		<global-results>
+			<result name="loginError">/base/login.jsp</result>
+	    	<result name="login">/base/login.jsp</result>
+	    	<result name="input">/base/error.jsp</result>
+	    	<result name="error">/base/error.jsp</result>
+	    	<result name="none">/base/nonePermission.jsp</result>
+		</global-results>
+	</package>
+	
+	<package name="hrms-login" extends="struts-default">
+		<default-interceptor-ref name="defaultStack"/>
+		
+		<action name="user_login" class="userAction" method="user_login">
+			<result name="success">/base/index.jsp</result>
+			<result name="loginError">/base/login.jsp</result>
+			<result name="input">/base/login.jsp</result>
+			<result name="login">/base/login.jsp</result>
+		</action>
+	</package>
+	
+	<package name="hrms-base" extends="struts-default">
+	<interceptors>
+            <interceptor-stack name="default-with-syslogInterceptor">
+                <interceptor-ref name="defaultStack"/>
+                <interceptor-ref name="syslogInterceptor"/>
+            </interceptor-stack>
+            <interceptor name="syslogInterceptor" class="com.hrms.interceptor.SyslogInterceptor"/>
+	</interceptors>
+	<default-interceptor-ref name="default-with-syslogInterceptor"/>	
+		<action name="moduleTree" class="moduleAction" method="moduleTree">
+			<result name="success">/base/leftMenu.jsp</result>
+			<result name="login">/base/login.jsp</result>
+		</action>
+	</package>
+	
+	<package name="hrms-main" extends="my-default">
+		
+		<!--Action的Component里德名字不要和属性中的名字一样-->
+		
+		<!--系统日志-->
+		<action name="syslog" class="syslogAction" method="syslog_list">
+			<result name="success">
+				<param name="location">/system/syslog_list.jsp</param>
+				<param name="currentPage">${currentPage}</param>
+			</result>
+		</action>
+		<action name="syslog_my" class="syslogAction" method="syslog_my">
+			<result name="success">
+				<param name="location">/system/syslog_my.jsp</param>
+				<param name="currentPage">${currentPage}</param>
+			</result>
+		</action>
+		<action name="syslog_query" class="syslogAction" method="syslog_query">
+			<result name="success">
+				<param name="location">/system/syslog_query.jsp</param>
+				<param name="currentPage">${currentPage}</param>
+			</result>
+		</action>
+		<action name="syslog_export" class="syslogAction">
+			<result name="success" type="stream">
+                     <param name="contentType">application/vnd.ms-excel</param>   <!-- 注意这里的ContentType -->
+                     <param name="inputName">excelStream</param>
+                     <param name="contentDisposition">attachment;fileName="${fileName}"</param>
+                     <param name="bufferSize">1024</param>
+			</result>
+		</action>
+		<!--用户-->
+		<action name="user_loginOut" class="userAction" method="user_loginOut">
+			<result name="success">/base/login.jsp</result>
+			<result name="login">/base/login.jsp</result>
+		</action>
+		<action name="user" class="userAction" method="user_list">
+			<result name="success">
+				<param name="location">/system/user_list.jsp</param>
+				<param name="currentPage">${currentPage}</param>
+			</result>
+		</action>
+		<action name="user_detail" class="userAction" method="user_detail">
+			<result name="success">
+				<param name="location">/system/user_detail.jsp</param>
+				<param name="currentPage">${currentPage}</param>
+			</result>
+		</action>
+		<action name="user_add" class="userAction" method="user_add">
+			<result name="success" type="redirectAction">/user</result>
+			<result name="error">/system/user_add.jsp</result>
+			<result name="input">/system/user_add.jsp</result>
+			<result name="add" >/system/user_add.jsp</result>
+			<result name="user_adds">/system/user_add.jsp</result>
+		</action>
+		<action name="user_update" class="userAction" method="user_update">
+			<result name="success" type="redirectAction">
+				<param name="actionName">/user</param>
+				<param name="currentPage">${currentPage}</param>
+			</result>
+			<result name="user_update">/system/user_update.jsp</result>
+			<result name="error">/system/user_update.jsp</result>
+		</action>
+		<action name="user_delete" class="userAction" method="user_delete">
+			<result name="success" type="redirectAction">
+				<param name="actionName">/user</param>
+				<param name="currentPage">${currentPage}</param>
+			</result>
+		</action>
+	
+		<!--模块-->
+		<action name="module_xmlTree" class="moduleAction" method="module_xmlTree">
+			<result name="success">/system/roleModule_list.jsp</result>
+			<result name="error">/system/module_list.jsp</result>
+		</action>
+		<action name="module" class="moduleAction" method="module_list">
+			<result name="success">/system/module_list.jsp</result>
+		</action>
+		<action name="module_add" class="moduleAction" method="module_add">
+			<result name="success" type="redirectAction">/module</result>
+			<result name="add" >/system/module_add.jsp</result>
+		</action>
+		<action name="module_adds" class="moduleAction" method="module_adds">
+			<result name="success">/system/module_add.jsp</result>
+		</action>
+		<action name="module_update" class="moduleAction" method="module_update">
+			<result name="module_update">/system/module_update.jsp</result>
+			<result name="success" type="redirectAction">/module</result>
+		</action>
+		<action name="module_delete" class="moduleAction" method="module_delete">
+			<result name="success" type="redirectAction">/module</result>
+		</action>
+		<!--角色模块-->
+		<action name="roleModule" class="roleModuleAction" method="roleModule_list">
+			<result name="success">
+				<param name="location">/system/roleModule_list.jsp</param>
+			</result>
+			<result name="error" type="redirectAction">
+				<param name="actionName">/module</param>
+				<param name="currentPage">${currentPage}</param>
+			</result>
+		</action>
+		<action name="roleModule_add" class="roleModuleAction" method="roleModule_add">
+			<result name="success">
+				<param name="location">/system/roleModule_list.jsp</param>
+			</result>
+			<result name="error" type="redirectAction">
+				<param name="actionName">/module</param>
+				<param name="currentPage">${currentPage}</param>
+			</result>
+		</action>
+		<action name="roleModule_delete" class="roleModuleAction" method="roleModule_delete">
+			<result name="success">
+				<param name="location">/system/roleModule_list.jsp</param>
+			</result>
+			<result name="error" type="redirectAction">
+				<param name="actionName">/module</param>
+				<param name="currentPage">${currentPage}</param>
+			</result>
+		</action>
+		
+		<!--用户模块-->
+		<action name="userModule" class="userModuleAction" method="userModule_list">
+			<result name="success">
+				<param name="location">/system/userModule_list.jsp</param>
+			</result>
+			<result name="error" type="redirectAction">
+				<param name="actionName">/module</param>
+				<param name="currentPage">${currentPage}</param>
+			</result>
+		</action>
+		<action name="userModule_add" class="userModuleAction" method="userModule_add">
+			<result name="success">
+				<param name="location">/system/userModule_list.jsp</param>
+			</result>
+			<result name="error" type="redirectAction">
+				<param name="actionName">/module</param>
+				<param name="currentPage">${currentPage}</param>
+			</result>
+		</action>
+		<action name="userModule_delete" class="userModuleAction" method="userModule_delete">
+			<result name="success">
+				<param name="location">/system/userModule_list.jsp</param>
+			</result>
+			<result name="error" type="redirectAction">
+				<param name="actionName">/module</param>
+				<param name="currentPage">${currentPage}</param>
+			</result>
+		</action>
+		
+		
+		<!--角色-->
+		<action name="role" class="roleAction" method="role_list">
+			<result name="success">
+				<param name="location">/system/role_list.jsp</param>
+				<param name="currentPage">${currentPage}</param>
+			</result>
+		</action>
+		<action name="role_add" class="roleAction" method="role_add">
+			<result name="success" type="redirectAction">/role</result>
+			<result name="add" >/system/role_add.jsp</result>
+			<result name="role_adds" >/system/role_add.jsp</result>
+			<result name="error">/system/role_add.jsp</result>
+		</action>
+		<action name="role_update" class="roleAction" method="role_update">
+			<result name="role_update">/system/role_update.jsp</result>
+			<result name="success" type="redirectAction">
+				<param name="actionName">/role</param>
+				<param name="currentPage">${currentPage}</param>
+			</result>
+			<result name="error">/system/role_update.jsp</result>
+		</action>
+		<action name="role_delete" class="roleAction" method="role_delete">
+			<result name="success" type="redirectAction">
+				<param name="actionName">/role</param>
+				<param name="currentPage">${currentPage}</param>
+			</result>
+		</action>
+		
+		<!--权限-->
+		<action name="permission" class="permissionAction" method="permission_list">
+			<result name="success">/system/permission_list.jsp</result>
+		</action>
+		<action name="userPermission_list" class="permissionAction" method="userPermission_list">
+			<result name="success">/system/userPermission_list.jsp</result>
+		</action>
+		<action name="userPermission_update" class="permissionAction" method="userPermission_update">
+			<result name="success" type="redirectAction">
+				<param name="actionName">/permission</param>
+				<param name="userId">${userId}</param>
+			</result>
+		</action>
+		<action name="userPermission_updateAll" class="permissionAction" method="userPermission_updateAll">
+			<result name="success" type="redirectAction">
+				<param name="actionName">/user</param>
+				<param name="userId">${userId}</param>
+			</result>
+		</action>
+		<action name="rolePermission_list" class="permissionAction" method="rolePermission_list">
+			<result name="success">/system/rolePermission_list.jsp</result>
+		</action>
+		<action name="rolePermission_update" class="permissionAction" method="rolePermission_update">
+			<result name="success" type="redirectAction">
+				<param name="actionName">/permission</param>
+				<param name="roleId">${roleId}</param>
+			</result>
+		</action>
+		<action name="rolePermission_updateAll" class="permissionAction" method="rolePermission_updateAll">
+			<result name="success" type="redirectAction">
+				<param name="actionName">/role</param>
+				<param name="roleId">${roleId}</param>
+			</result>
+		</action>
+		 		
+		<!--部门-->
+		<action name="dept" class="deptAction" method="dept_list">
+			<result name="success">
+				<param name="location">/organization/dept_list.jsp</param>
+				<param name="currentPage">${currentPage}</param>
+			</result>
+		</action>
+		<action name="dept_add" class="deptAction" method="dept_add">
+			<result name="success" type="redirectAction">/dept</result>
+			<result name="add" >/organization/dept_add.jsp</result>
+			<result name="adds" >/organization/dept_add.jsp</result>
+		</action>
+		<action name="dept_update" class="deptAction" method="dept_update">
+			<result name="update">/organization/dept_update.jsp</result>
+			<result name="success" type="redirectAction">
+				<param name="actionName">/dept</param>
+				<param name="currentPage">${currentPage}</param>
+			</result>
+		</action>
+		<action name="dept_delete" class="deptAction" method="dept_delete">
+			<result name="success" type="redirectAction">
+				<param name="actionName">/dept</param>
+				<param name="currentPage">${currentPage}</param>
+			</result>
+		</action>
+		
+		<!--岗位-->
+		<action name="post" class="postAction" method="post_list">
+			<result name="success">
+				<param name="location">/organization/post_list.jsp</param>
+				<param name="currentPage">${currentPage}</param>
+			</result>
+		</action>
+		<action name="post_add" class="postAction" method="post_add">
+			<result name="success" type="redirectAction">/post</result>
+			<result name="add" >/organization/post_add.jsp</result>
+			<result name="adds" >/organization/post_add.jsp</result>
+		</action>
+		<action name="post_update" class="postAction" method="post_update">
+			<result name="update">/organization/post_update.jsp</result>
+			<result name="success" type="redirectAction">
+				<param name="actionName">/post</param>
+				<param name="currentPage">${currentPage}</param>
+			</result>
+		</action>
+		<action name="post_delete" class="postAction" method="post_delete">
+			<result name="success" type="redirectAction">
+				<param name="actionName">/post</param>
+				<param name="currentPage">${currentPage}</param>
+			</result>
+		</action>
+		
+		<!--培训-->
+		<action name="train" class="trainAction" method="train_list">
+			<result name="success">
+				<param name="location">/trainManager/train_list.jsp</param>
+				<param name="currentPage">${currentPage}</param>
+			</result>
+		</action>
+		<action name="train_add" class="trainAction" method="train_add">
+			<result name="success" type="redirectAction">/train</result>
+			<result name="add" >/trainManager/train_add.jsp</result>
+			<result name="adds" >/trainManager/train_add.jsp</result>
+		</action>
+		<action name="train_detail" class="trainAction" method="train_detail">
+			<result name="success">
+				<param name="location">/trainManager/train_detail.jsp</param>
+				<param name="currentPage">${currentPage}</param>
+			</result>
+		</action>
+		<action name="train_result" class="trainAction" method="train_update">
+			<result name="update">/trainManager/train_result.jsp</result>
+			<result name="success" type="redirectAction">
+				<param name="actionName">/train</param>
+				<param name="currentPage">${currentPage}</param>
+			</result>
+		</action>
+		<action name="train_update" class="trainAction" method="train_update">
+			<result name="update">/trainManager/train_update.jsp</result>
+			<result name="success" type="redirectAction">
+				<param name="actionName">/train</param>
+				<param name="currentPage">${currentPage}</param>
+			</result>
+		</action>
+		<action name="train_delete" class="trainAction" method="train_delete">
+			<result name="success" type="redirectAction">
+				<param name="actionName">/train</param>
+				<param name="currentPage">${currentPage}</param>
+			</result>
+		</action>
+		<action name="traintype" class="traintypeAction" method="traintype_list">
+			<result name="success">
+				<param name="location">/trainManager/traintype_list.jsp</param>
+				<param name="currentPage">${currentPage}</param>
+			</result>
+		</action>
+		<action name="traintype_add" class="traintypeAction" method="traintype_add">
+			<result name="success" type="redirectAction">/traintype</result>
+			<result name="add" >/trainManager/traintype_add.jsp</result>
+			<result name="adds" >/trainManager/traintype_add.jsp</result>
+		</action>
+		<action name="traintype_update" class="traintypeAction" method="traintype_update">
+			<result name="update">/trainManager/traintype_update.jsp</result>
+			<result name="success" type="redirectAction">
+				<param name="actionName">/traintype</param>
+				<param name="currentPage">${currentPage}</param>
+			</result>
+		</action>
+		<action name="traintype_delete" class="traintypeAction" method="traintype_delete">
+			<result name="success" type="redirectAction">
+				<param name="actionName">/traintype</param>
+				<param name="currentPage">${currentPage}</param>
+			</result>
+		</action>
+		
+		<!--员工维护-->
+		<action name="employee" class="employeeAction" method="employee_list">
+			<result name="success">
+				<param name="location">/employeeManager/employee_list.jsp</param>
+				<param name="currentPage">${currentPage}</param>
+			</result>
+		</action>
+		<action name="employee_detail" class="employeeAction" method="employee_detail">
+			<result name="success">/employeeManager/employee_detail.jsp</result>
+		</action>
+		<action name="employee_add" class="employeeAction" method="employee_add">
+			<result name="add" >/employeeManager/employee_add.jsp</result>
+			<result name="adds" >/employeeManager/employee_add.jsp</result>
+			<result name="success" type="redirectAction">
+				<param name="actionName">/employee</param>
+				<param name="currentPage">${currentPage}</param>
+			</result>
+		</action>
+		<action name="employee_update" class="employeeAction" method="employee_update">
+			<result name="update">/employeeManager/employee_update.jsp</result>
+			<result name="success" type="redirectAction">
+				<param name="actionName">/employee</param>
+				<param name="currentPage">${currentPage}</param>
+			</result>
+		</action>
+		<action name="employee_delete" class="employeeAction" method="employee_delete">
+			<result name="success" type="redirectAction">
+				<param name="actionName">/employee</param>
+				<param name="currentPage">${currentPage}</param>
+			</result>
+		</action>
+		
+		<!--员工异动-->
+		<action name="employeeRedeploy" class="employeeRedeployAction" method="employeeRedeploy_list">
+			<result name="success">
+				<param name="location">/employeeRedeployManager/employeeRedeploy_list.jsp</param>
+				<param name="currentPage">${currentPage}</param>
+			</result>
+		</action>
+		<action name="employeeRedeploy_my" class="employeeRedeployAction" method="employeeRedeploy_my">
+			<result name="success">
+				<param name="location">/employeeRedeployManager/employeeRedeploy_my.jsp</param>
+				<param name="currentPage">${currentPage}</param>
+			</result>
+		</action>
+		<action name="employeeRedeploy_detail" class="employeeRedeployAction" method="employeeRedeploy_detail">
+			<result name="success">
+				<param name="location">/employeeRedeployManager/employeeRedeploy_detail.jsp</param>
+				<param name="currentPage">${currentPage}</param>
+			</result>
+		</action>
+		<action name="employeeRedeploy_add" class="employeeRedeployAction" method="employeeRedeploy_add">
+			<result name="add" >/employeeRedeployManager/employeeRedeploy_add.jsp</result>
+			<result name="success" type="redirectAction">
+				<param name="actionName">/employeeRedeploy_my</param>
+				<param name="currentPage">${currentPage}</param>
+			</result>
+		</action>
+		<action name="employeeRedeploy_update" class="employeeRedeployAction" method="employeeRedeploy_update">
+			<result name="update">/employeeRedeployManager/employeeRedeploy_update.jsp</result>
+			<result name="success" type="redirectAction">
+				<param name="actionName">/employeeRedeploy_my</param>
+				<param name="currentPage">${currentPage}</param>
+			</result>
+			<result name="error">/base/error.jsp</result>
+		</action>
+		<action name="employeeRedeploy_delete" class="employeeRedeployAction" method="employeeRedeploy_delete">
+			<result name="success" type="redirectAction">
+				<param name="actionName">/employeeRedeploy_my</param>
+				<param name="currentPage">${currentPage}</param>
+			</result>
+			<result name="error">/base/error.jsp</result>
+		</action>
+		<action name="employeeRedeploy_findEmployee" class="employeeRedeployAction" method="employeeRedeploy_findEmployee">
+			<result name="success">
+				<param name="location">/employeeRedeployManager/employeeRedeploy_add.jsp</param>
+				<param name="currentPage">${currentPage}</param>
+			</result>
+		</action>
+		<action name="employeeRedeploy_submit" class="employeeRedeployAction" method="employeeRedeploy_submit">
+			<result name="success" type="redirectAction">
+				<param name="actionName">/employeeRedeploy_my</param>
+				<param name="currentPage">${currentPage}</param>
+			</result>
+			<result name="error">/employeeRedeployManager/employeeRedeploy_error.jsp</result>
+		</action>
+		<action name="employeeRedeploy_send" class="employeeRedeployAction" method="employeeRedeploy_send">
+			<result name="send">/employeeRedeployManager/employeeRedeploy_send.jsp</result>
+			<result name="success" type="redirectAction">
+				<param name="actionName">/employeeRedeploy_transactorList</param>
+				<param name="currentPage">${currentPage}</param>
+			</result>
+			<result name="warning">/employeeRedeployManager/employeeRedeploy_warning.jsp</result>
+			<result name="sendError">/employeeRedeployManager/employeeRedeploy_sendError.jsp</result>
+		</action>
+		<action name="employeeRedeploy_transactorList" class="employeeRedeployAction" method="employeeRedeploy_transactorList">
+			<result name="success">
+				<param name="location">/employeeRedeployManager/employeeRedeploy_transactorList.jsp</param>
+				<param name="currentPage">${currentPage}</param>
+			</result>
+		</action>
+		
+		<action name="employeeRedeploy_transactor" class="employeeRedeployAction" method="employeeRedeploy_transactor">
+			<result name="transactor">/employeeRedeployManager/employeeRedeploy_transactor.jsp</result>
+			<result name="warning">/employeeRedeployManager/employeeRedeploy_warning.jsp</result>
+			<result name="success" type="redirectAction">
+				<param name="actionName">/employeeRedeploy_transactorList</param>
+				<param name="currentPage">${currentPage}</param>
+			</result>
+		</action>
+		<!--招聘	-->
+		<action name="recruit" class="recruitAction" method="recruit_list">
+			<result name="success">
+				<param name="location">/recruitManager/recruit_list.jsp</param>
+				<param name="currentPage">${currentPage}</param>
+			</result>
+		</action>
+		<action name="recruit_my" class="recruitAction" method="recruit_my">
+			<result name="success">
+				<param name="location">/recruitManager/recruit_my.jsp</param>
+				<param name="currentPage">${currentPage}</param>
+			</result>
+		</action>
+		<action name="recruit_detail" class="recruitAction" method="recruit_detail">
+			<result name="success">
+				<param name="location">/recruitManager/recruit_detail.jsp</param>
+				<param name="currentPage">${currentPage}</param>
+			</result>
+		</action>
+		<action name="recruit_add" class="recruitAction" method="recruit_add">
+			<result name="add" >/recruitManager/recruit_add.jsp</result>
+			<result name="success" type="redirectAction">
+				<param name="actionName">/recruit_my</param>
+				<param name="currentPage">${currentPage}</param>
+			</result>
+		</action>
+		<action name="recruit_update" class="recruitAction" method="recruit_update">
+			<result name="update">/recruitManager/recruit_update.jsp</result>
+			<result name="success" type="redirectAction">
+				<param name="actionName">/recruit_my</param>
+				<param name="currentPage">${currentPage}</param>
+			</result>
+			
+		</action>
+		<action name="recruit_delete" class="recruitAction" method="recruit_delete">
+			<result name="success" type="redirectAction">
+				<param name="actionName">/recruit_my</param>
+				<param name="currentPage">${currentPage}</param>
+			</result>
+		</action>
+		<action name="recruit_submit" class="recruitAction" method="recruit_submit">
+			<result name="submit">/recruitManager/recruit_submit.jsp</result>
+			<result name="success" type="redirectAction">
+				<param name="actionName">/recruit_my</param>
+				<param name="currentPage">${currentPage}</param>
+			</result>
+		</action>
+		<action name="recruit_approverList" class="recruitAction" method="recruit_approverList">
+			<result name="success">
+				<param name="location">/recruitManager/recruit_approverList.jsp</param>
+				<param name="currentPage">${currentPage}</param>
+			</result>
+		</action>
+		<action name="recruit_approver" class="recruitAction" method="recruit_approver">
+			<result name="approver">/recruitManager/recruit_approver.jsp</result>
+			<result name="success" type="redirectAction">
+				<param name="actionName">/recruit_approverList</param>
+				<param name="currentPage">${currentPage}</param>
+			</result>
+		</action>
+		<action name="recruit_approverCancel" class="recruitAction" method="recruit_approverCancel">
+			<result name="success" type="redirectAction">
+				<param name="actionName">/recruit_approverList</param>
+				<param name="currentPage">${currentPage}</param>
+			</result>
+		</action>
+		<action name="recruit_approverEnd" class="recruitAction" method="recruit_approverEnd">
+			<result name="success" type="redirectAction">
+				<param name="actionName">/recruit_approverList</param>
+				<param name="currentPage">${currentPage}</param>
+			</result>
+		</action>
+		<action name="recruit_publish" class="recruitAction" method="recruit_publish">
+			<result name="publish">/recruitManager/recruit_publish.jsp</result>
+			<result name="success" type="redirectAction">
+				<param name="actionName">/recruit_my</param>
+				<param name="currentPage">${currentPage}</param>
+			</result>
+		</action>
+		<action name="recruit_send" class="recruitAction" method="recruit_send">
+			<result name="error">/base/error.jsp</result>
+			<result name="send">/recruitManager/recruit_send.jsp</result>
+			<result name="success" type="redirectAction">
+				<param name="actionName">/recruit_approverList</param>
+				<param name="currentPage">${currentPage}</param>
+			</result>
+		</action>
+		<!--应聘-->
+		<action name="jobSeeker" class="jobSeekerAction" method="jobSeeker_list">
+			<result name="success">
+				<param name="location">/jobSeekerManager/jobSeeker_list.jsp</param>
+				<param name="currentPage">${currentPage}</param>
+				<param name="errorMessage">${errorMessage}</param>
+			</result>
+		</action>
+		<action name="jobSeeker_upload" class="jobSeekerAction" method="jobSeeker_upload">
+			<result name="success" type="redirectAction">
+				<param name="actionName">jobSeeker</param>
+				<param name="currentPage">${currentPage}</param>
+				<param name="recruitId">${recruitId}</param>
+			</result>
+		</action>
+		<action name="jobSeeker_scan" class="jobSeekerAction" method="jobSeeker_scan">
+			<result name="success" type="redirectAction">
+                <param name="actionName">jobSeeker_info</param>
+				<param name="currentPage">${currentPage}</param>
+				<param name="recruitId">${recruitId}</param>
+				<param name="fileName">${fileName}</param>
+			</result>
+		</action>
+		<action name="jobSeeker_info" class="jobSeekerAction">
+			<result name="success" type="stream">
+                <param name="contentType">application/msword</param> <!-- 注意这里的ContentType -->
+                <param name="inputName">inputStream</param>
+                <param name="contentDisposition">inline;fileName="${fileName}"</param>
+                <param name="bufferSize">12*1024</param>
+			</result>
+		</action>
+		
+		<!--请假 -->
+		<action name="leave" class="leaveAction" method="leave_list">
+			<result name="success">
+				<param name="location">/leaveManager/leave_list.jsp</param>
+				<param name="currentPage">${currentPage}</param>
+			</result>
+		</action>
+		<action name="leave_my" class="leaveAction" method="leave_my">
+			<result name="success">
+				<param name="location">/leaveManager/leave_my.jsp</param>
+				<param name="currentPage">${currentPage}</param>
+			</result>
+		</action>
+		<action name="leave_detail" class="leaveAction" method="leave_detail">
+			<result name="success">
+				<param name="location">/leaveManager/leave_detail.jsp</param>
+				<param name="currentPage">${currentPage}</param>
+			</result>
+		</action>
+		<action name="leave_add" class="leaveAction" method="leave_add">
+			<result name="add" >/leaveManager/leave_add.jsp</result>
+			<result name="success" type="redirectAction">
+				<param name="actionName">/leave_my</param>
+				<param name="currentPage">${currentPage}</param>
+			</result>
+		</action>
+		<action name="leave_update" class="leaveAction" method="leave_update">
+			<result name="update">/leaveManager/leave_update.jsp</result>
+			<result name="success" type="redirectAction">
+				<param name="actionName">/leave_my</param>
+				<param name="currentPage">${currentPage}</param>
+			</result>
+			
+		</action>
+		<action name="leave_delete" class="leaveAction" method="leave_delete">
+			<result name="success" type="redirectAction">
+				<param name="actionName">/leave_my</param>
+				<param name="currentPage">${currentPage}</param>
+			</result>
+		</action>
+		<action name="leave_submit" class="leaveAction" method="leave_submit">
+			<result name="submit">/leaveManager/leave_submit.jsp</result>
+			<result name="success" type="redirectAction">
+				<param name="actionName">/leave_my</param>
+				<param name="currentPage">${currentPage}</param>
+			</result>
+		</action>
+		<action name="leave_approverList" class="leaveAction" method="leave_approverList">
+			<result name="success">
+				<param name="location">/leaveManager/leave_approverList.jsp</param>
+				<param name="currentPage">${currentPage}</param>
+			</result>
+		</action>
+		<action name="leave_approver" class="leaveAction" method="leave_approver">
+			<result name="approver">/leaveManager/leave_approver.jsp</result>
+			<result name="success" type="redirectAction">
+				<param name="actionName">/leave_approverList</param>
+				<param name="currentPage">${currentPage}</param>
+			</result>
+		</action>
+		<action name="leave_approverCancel" class="leaveAction" method="leave_approverCancel">
+			<result name="success" type="redirectAction">
+				<param name="actionName">/leave_approverList</param>
+				<param name="currentPage">${currentPage}</param>
+			</result>
+		</action>
+		<action name="leave_approverEnd" class="leaveAction" method="leave_approverEnd">
+			<result name="success" type="redirectAction">
+				<param name="actionName">/leave_approverList</param>
+				<param name="currentPage">${currentPage}</param>
+			</result>
+		</action>
+		<action name="leave_send" class="leaveAction" method="leave_send">
+			<result name="error">/base/error.jsp</result>
+			<result name="send">/leaveManager/leave_send.jsp</result>
+			<result name="success" type="redirectAction">
+				<param name="actionName">/leave_approverList</param>
+				<param name="currentPage">${currentPage}</param>
+			</result>
+		</action>
+		
+		
+		<action name="*_*" class="{1}Action" method="{1}_{2}">
+			<result name="{1}_{2}">/base/{1}_{2}.jsp</result>
+		</action>
+	</package>
+	
+</struts>
